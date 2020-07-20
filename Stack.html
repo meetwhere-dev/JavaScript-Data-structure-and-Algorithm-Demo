@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        //    栈的实现
+      let _items = Symbol('StackItems')
+      class Stack {
+        constructor() {
+          this[_items] = [];
+        }
+        push(q) {
+          this[_items].push(q);
+        }
+        peek() {
+          return this[_items][this[_items].length - 1];
+        }
+        pop() {
+          return this[_items].pop();
+        }
+        isEmpty() {
+          return this[_items].length === 0;
+        }
+        clear() {
+          this[_items] = [];
+        }
+      }
+
+    //    利用栈的后进先出实现十进制向二进制转换
+      function decimalToBinary(decNmuber) {
+        let remStack = new Stack();
+        let number = decNmuber;
+        while (number > 0) {
+          let temp = number % 2;
+          remStack.push(temp);
+          number = Math.floor(number/2);
+        }
+        let result = '';
+        while (!remStack.isEmpty()) {
+          result += remStack.pop().toString();
+        }
+        return result;
+      }
+
+      console.log('9转成二进制：', decimalToBinary(9))
+    </script>
+</body>
+</html>
