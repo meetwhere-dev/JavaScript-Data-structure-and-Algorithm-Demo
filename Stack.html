@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
-</head>
-<body>
+  </head>
+  <body>
     <script>
-        //    栈的实现
-      let _items = Symbol('StackItems')
+      //    栈的实现
+      let _items = Symbol("StackItems");
       class Stack {
         constructor() {
           this[_items] = [];
@@ -30,23 +30,179 @@
         }
       }
 
-    //    利用栈的后进先出实现十进制向二进制转换
+      //    利用栈的后进先出实现十进制向二进制转换
       function decimalToBinary(decNmuber) {
         let remStack = new Stack();
         let number = decNmuber;
         while (number > 0) {
-          let temp = number % 2;
-          remStack.push(temp);
-          number = Math.floor(number/2);
+          remStack.push(number % 2);
+          number = Math.floor(number / 2);
         }
-        let result = '';
+        let result = "";
         while (!remStack.isEmpty()) {
           result += remStack.pop().toString();
         }
         return result;
       }
 
-      console.log('9转成二进制：', decimalToBinary(9))
+      console.log("9转成二进制   decimalToBinary(9)：", decimalToBinary(9));
+
+      //   转换成[2,36]进制
+      function baseConverter(decNmuber, base) {
+        let remStack = new Stack();
+        let temp = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        let number = decNmuber;
+        if (base > 36 || base < 2) {
+          return new Error("需要转换的进制应在[2，36]之间");
+        }
+        while (number > 0) {
+          remStack.push(number % base);
+          number = Math.floor(number / base);
+        }
+        let result = "";
+        while (!remStack.isEmpty()) {
+          result += temp[remStack.pop()];
+        }
+        return result;
+      }
+      console.log(
+        "1000转成16进制   baseConverter(1000,16)：",
+        baseConverter(1000, 16)
+      );
+
+
+    //   队列的实现
+      class Queue {
+          constructor(){
+              this.count = 0;
+              this.lowestCount = 0;
+              this.items = {}
+          }
+          enqueue(e){
+            this.items[this.count] = e;
+            this.count++
+          }
+          dequeue(){
+              if(this.isEmpty()){
+                  return undefined
+              }
+              const result = this.items[this.lowestCount];
+              delete this.items[this.lowestCount]
+              this.lowestCount++;
+              return result
+          }
+          peek(){
+              if(this.isEmpty()){
+                  return undefined
+              }
+              return this.items[this.lowestCount]
+          }
+          isEmpty(){
+              return (this.count - this.lowestCount) === 0
+          }
+          size(){
+              return this.count - this.lowestCount
+          }
+          clear(){
+              this.count = 0;
+              this.lowestCount = 0;
+              this.items = {}
+          }
+          toString(){
+              if(this.isEmpty()){
+                  return ''
+              }
+              let result = ''
+              for(let i = this.lowestCount; i < this.count; i++){
+                result += this.items[i]
+              }
+              return result
+          }
+
+      }
+
+    //   双端队列的实现
+    class Deque{
+        constructor(){
+            this.count = 0;
+            this.lowestCount = 0;
+            this.items = {}
+        }
+        addFront(e){
+            this.items[--this.lowestCount] = e
+        }
+        addBack(e){
+            this.items[this.count++] = e
+        }
+        removeFront(){
+            if(this.isEmpty()){
+                return ''
+            }
+            let result = this.items[this.lowestCount]
+            delete this.items[this.lowestCount++]
+            return result
+        }
+        removeBack(){
+            if(this.isEmpty()){
+                return ''
+            }
+            let result = this.items[this.Count]
+            delete this.items[this.Count--]
+            return result
+        }
+        peekFount(){
+            return this.items[this.lowestCount]
+        }
+        peekBack(){
+            return this.items[this.Count]
+        }
+        isEmpty(){
+            return (this.count - this.lowestCount) === 0
+        }
+        size(){
+              return this.count - this.lowestCount
+        }
+        clear(){
+            this.count = 0;
+            this.lowestCount = 0;
+            this.items = {}
+        }
+        toString(){
+            if(this.isEmpty()){
+                return ''
+            }
+            let result = ''
+            for(let i = this.lowestCount; i < this.count; i++){
+            result += this.items[i]
+            }
+            return result
+        }
+    }
+
+    // 击鼓传花游戏
+    function hotPotato(peoplesList, num){
+        let queue = new Queue();
+        let elimitedList = [];
+        peoplesList.forEach(e => queue.enqueue(e));
+
+        console.log(queue.size())
+        while(queue.size() > 1){
+            for(let i = 0; i< num;i++){
+                queue.enqueue(queue.dequeue());
+            }
+            let taotai = queue.dequeue()
+            elimitedList.push(taotai);
+            console.log(taotai,'被淘汰')
+        }
+        return {
+            elimitedList: elimitedList,
+            winner: queue.dequeue()
+        }
+    }
+    let names = ['zhangsan', 'Lisi', 'wangwu', 'qianliu', 'sunqi'];
+    let result = hotPotato(names, 6);
+    console.log(result)
+
     </script>
-</body>
+  </body>
 </html>
